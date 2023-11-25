@@ -1,0 +1,11 @@
+localhost-configuration:
+  connection_string: jdbc:postgresql://localhost:5432/trello_db
+
+spring:
+  jpa:
+    show-sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/trello_db?currentSchema=public
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
