@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/trello_db?currentSchema=public
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver   # Specify the JDBC driver class
+
+  jpa:
+    hibernate:
+      ddl-auto: update     # Automatically update the database schema
+    show-sql: true         # Show SQL statements in the console
+
+server:
+  port: 8080   # Specify the port on which the embedded Tomcat server should run
+
