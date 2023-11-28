@@ -39,7 +39,6 @@ public class UserController {
         usersService.updateUserPassword(id, newPassword);
         return ResponseEntity.ok("User with id: " + id + " has been updated");
     }
-
     @DeleteMapping("/api/user/profile/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Integer id){
         usersService.deleteUser(id);

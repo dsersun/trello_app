@@ -17,7 +17,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 public class User {
 
     @Id
-    @Column(name = "userid")
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
