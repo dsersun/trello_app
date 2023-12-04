@@ -46,4 +46,10 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "executor_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
+
 }

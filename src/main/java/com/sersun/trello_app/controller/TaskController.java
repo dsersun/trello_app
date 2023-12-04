@@ -41,4 +41,23 @@ public class TaskController {
         taskService.deleteTask(taskId, projectId);
         return ResponseEntity.ok("Task with id: " + taskId + " has been deleted!");
     }
+
+
+    @GetMapping("/api/tasks/assignes/{userId}")
+    public ResponseEntity<List<Task>> returnTasksAssignedToUser(@PathVariable Integer userId){
+        return ResponseEntity.ok(taskService.getTasksByUserId(userId));
+    }
+
+    @PutMapping("/api/tasks/{taskId}/assignes/{userId}")
+    public ResponseEntity<String> assignTaskToUser(@PathVariable Integer taskId, @PathVariable Integer userId){
+        taskService.assignTaskToUser(taskId, userId);
+        return ResponseEntity.ok("Task: " + taskId + " has been assigned to user: " + userId + '!');
+    }
+
+
+    @PutMapping("/api/tasks/{taskId}/complete")
+    public ResponseEntity<String> completeTask(@PathVariable Integer taskId){
+        taskService.completeTask(taskId);
+        return ResponseEntity.ok("Task with taskId: " + taskId + " has been completed");
+    }
 }

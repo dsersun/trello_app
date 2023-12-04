@@ -2,8 +2,11 @@ package com.sersun.trello_app.service;
 
 import com.sersun.trello_app.model.Project;
 import com.sersun.trello_app.model.Task;
+import com.sersun.trello_app.model.TaskStatus;
+import com.sersun.trello_app.model.User;
 import com.sersun.trello_app.repository.ProjectRepository;
 import com.sersun.trello_app.repository.TaskRepository;
+import com.sersun.trello_app.repository.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,8 @@ public class TaskService {
     TaskRepository taskRepository;
     @Autowired
     ProjectRepository projectRepository;
+    @Autowired
+    UsersRepository usersRepository;
 
 
     // Получение списка задач для конкретного проекта
@@ -52,7 +57,7 @@ public class TaskService {
         existingTask.setTaskName(updatedTask.getTaskName());
         existingTask.setTaskDescription(updatedTask.getTaskDescription());
         existingTask.setDueDate(updatedTask.getDueDate());
-        existingTask.setStatus(updatedTask.getStatus());
+        //existingTask.setStatus(updatedTask.getStatus());
         log.info("Updated task with id=" + taskId + " : " + updatedTask);
         return taskRepository.save(existingTask);
     }
@@ -64,5 +69,28 @@ public class TaskService {
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         taskRepository.delete(task);
         log.info("Task with id=" + taskId + " has been deleted!");
+    }
+
+    //                  Assignment service
+    public List<Task> getTasksByUserId(Integer userId) {
+        log.info("Returned list of tasks assigned to user: " + userId);
+        List<Task> taskByUser = taskRepository.findByUserUserId(userId);
+        return taskByUser;
+    }
+
+    public Task assignTaskToUser(Integer taskId, Integer userId){
+        Task existingTask = taskRepository.findByTaskId(taskId).stream()
+                .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        User user = usersRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        existingTask.setUser(user);
+        return taskRepository.save(existingTask);
+    }
+
+
+    public Task completeTask(Integer taskId) {
+        Task completedTask = taskRepository.findByTaskId(taskId).stream()
+                .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        completedTask.setStatus(TaskStatus.DONE);
+        return taskRepository.save(completedTask);
     }
 }
