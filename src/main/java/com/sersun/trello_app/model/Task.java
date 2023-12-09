@@ -28,7 +28,7 @@ public class Task {
     private Integer taskId;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "project_id", referencedColumnName = "project_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Project project;
 
@@ -47,8 +47,9 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "executor_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    //@JsonIgnore
+    @JoinColumn(name = "executor_id", referencedColumnName = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
