@@ -1,5 +1,7 @@
 package com.sersun.trello_app.service;
 
+import com.sersun.trello_app.DTO.TaskDTO;
+import com.sersun.trello_app.DTOTransformer.TaskDTOTransformer;
 import com.sersun.trello_app.model.Project;
 import com.sersun.trello_app.model.Task;
 import com.sersun.trello_app.model.TaskStatus;
@@ -13,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -24,40 +28,53 @@ public class TaskService {
     ProjectRepository projectRepository;
     @Autowired
     UsersRepository usersRepository;
+    @Autowired
+    TaskDTOTransformer taskDTOTransformer;
+
+
+
 
 
     // Получение списка задач для конкретного проекта
-    public List<Task> returnAllTaskByProjectId(Integer projectId){
+    public List<TaskDTO> returnAllTaskByProjectId(Integer projectId){
+        List<Task> taskListByProject =  taskRepository.findAll();
         log.info("Returning all task by projectId from the database...");
-        return taskRepository.findByProjectProjectId(projectId);
+        return taskListByProject.stream()
+                .map(e -> taskDTOTransformer.convertToDto(e))
+                .filter(e -> e.getProjectId() == projectId)
+                .collect(Collectors.toList());
     }
 
     // Создание новой задачи в рамках проекта
-    public void createTask(Integer projectId, Task task){
+    public void createTask(Integer projectId, TaskDTO taskDTO){
         Project project = projectRepository.findById(projectId)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-        task.setProject(project);
+        taskDTO.setProjectId(project.getProjectId());
+        Task task = taskDTOTransformer.convertToModel(taskDTO, project);
         taskRepository.save(task);
         log.info("Created new task: " + task);
     }
 
     // Получение информации о конкретной задаче в рамках проекта
-    public Task returnTaskByIdAndByProjectId(Integer taskId, Integer projectId){
+    public TaskDTO returnTaskByIdAndByProjectId(Integer taskId, Integer projectId){
         log.info("Returning all task by projectId from the database...");
         return taskRepository.findByProjectProjectId(projectId).stream()
-                .filter(e -> e.getTaskId().equals(taskId))
+                .map(e -> taskDTOTransformer.convertToDto(e))
+                .filter(task -> task.getTaskId() == taskId)
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
     }
 
     // Обновление информации о конкретной задаче в рамках проекта
-    public Task updateTask(Task updatedTask, Integer taskId, Integer projectId){
+    public Task updateTask(TaskDTO updatedTask, Integer taskId, Integer projectId){
         Task existingTask = taskRepository.findByProjectProjectId(projectId).stream()
                 .filter(e -> e.getTaskId().equals(taskId))
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+
         existingTask.setTaskName(updatedTask.getTaskName());
         existingTask.setTaskDescription(updatedTask.getTaskDescription());
+        existingTask.setStatus(updatedTask.getStatus());
         existingTask.setDueDate(updatedTask.getDueDate());
-        //existingTask.setStatus(updatedTask.getStatus());
+
         log.info("Updated task with id=" + taskId + " : " + updatedTask);
         return taskRepository.save(existingTask);
     }
@@ -72,18 +89,22 @@ public class TaskService {
     }
 
     //                  Assignment service
-    public List<Task> getTasksByUserId(Integer userId) {
+    public List<TaskDTO> getTasksByUserId(Integer userId) {
         log.info("Returned list of tasks assigned to user: " + userId);
-        List<Task> taskByUser = taskRepository.findByUserUserId(userId);
-        return taskByUser;
+        List<Task> taskByUserId = taskRepository.findAll();
+        return taskByUserId.stream()
+                .map(e -> taskDTOTransformer.convertToDto(e))
+                .filter(e -> e.getExecutorId().equals(userId))
+                .collect(Collectors.toList());
     }
 
-    public Task assignTaskToUser(Integer taskId, Integer userId){
-        Task existingTask = taskRepository.findByTaskId(taskId).stream()
-                .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    // assign task to user
+    public void assignTaskToUser(Integer taskId, Integer userId){
+        Task existingTask = taskRepository.findByTaskId(taskId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         User user = usersRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         existingTask.setUser(user);
-        return taskRepository.save(existingTask);
+        taskRepository.save(existingTask);
+        log.info("Task: " + taskId + " assignet to user: " + userId);
     }
 
 
@@ -92,5 +113,29 @@ public class TaskService {
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         completedTask.setStatus(TaskStatus.DONE);
         return taskRepository.save(completedTask);
+    }
+
+    public List<TaskDTO> findByNameOrDescription(String name, String description){
+        return taskRepository
+                .findAllByTaskNameContainingIgnoreCaseOrTaskDescriptionContainingIgnoreCase(name, description)
+                .stream()
+                .map(e -> taskDTOTransformer.convertToDto(e))
+                .collect(Collectors.toList());
+    }
+
+    public List<TaskDTO> findAllByTaskStatus(TaskStatus taskStatus){
+        return taskRepository
+                .findAllByStatus(taskStatus)
+                .stream()
+                .map(e -> taskDTOTransformer.convertToDto(e))
+                .collect(Collectors.toList());
+    }
+
+    public List<TaskDTO> filterByDueDate(Date startDate, Date endDate){
+        return taskRepository
+                .findAllByDueDateBetween(startDate, endDate)
+                .stream()
+                .map(e -> taskDTOTransformer.convertToDto(e))
+                .collect(Collectors.toList());
     }
 }

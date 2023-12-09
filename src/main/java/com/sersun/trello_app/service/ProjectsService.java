@@ -1,5 +1,7 @@
 package com.sersun.trello_app.service;
 
+import com.sersun.trello_app.DTO.ProjectDTO;
+import com.sersun.trello_app.DTOTransformer.ProjectDTOTransformer;
 import com.sersun.trello_app.model.Project;
 import com.sersun.trello_app.repository.ProjectRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -8,18 +10,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class ProjectsService {
     @Autowired
     ProjectRepository projectRepository;
+    @Autowired
+    ProjectDTOTransformer projectDTOTransformer;
 
-    // Получение списка всех проектов.
-    public List<Project> returnAllProjects(){
+
+    public List<ProjectDTO> returnAllProjects(){
         log.info("Returning all projects from the database...");
-        return (List<Project>) projectRepository.findAll();
+        List<Project> allProjectList = projectRepository.findAll();
+        return allProjectList.stream()
+                .map(e -> projectDTOTransformer.convertToDto(e))
+                .collect(Collectors.toList());
     }
 
     // Создание нового проекта
@@ -49,5 +58,15 @@ public class ProjectsService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         projectRepository.delete(project);
         log.info("Project with id=" + id + " has been deleted!");
+    }
+
+    // find and filters
+
+    public List<Project> searchByNameOrDescription(String name, String description){
+        return projectRepository.findAllByProjectNameContainingIgnoreCaseOrProjectDescriptionContainingIgnoreCase(name, description);
+    }
+
+    public List<Project> filterByStartDateBetween(Date startDate, Date endDate){
+        return projectRepository.findAllByStartDateBetween(startDate, endDate);
     }
 }
