@@ -44,12 +44,17 @@ public class ProjectsService {
     }
 
     // Обновление информации о конкретном проекте
-    public void updateProject(Integer id, Project project){
-        Project foundProject = projectRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-        project.setProjectId(id);
-        projectRepository.save(project);
-        log.info("Updated project with id=" + id + " : " + project);
+    public ResponseStatusException updateProject(Integer id, Project project) {
+        if (id == null) {
+            return new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        } else {
+            Project foundProject = projectRepository.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+            project.setProjectId(id);
+            projectRepository.save(project);
+            log.info("Updated project with id=" + id + " : " + project);
+            return null;
+        }
     }
 
     // Удаление конкретного проекта

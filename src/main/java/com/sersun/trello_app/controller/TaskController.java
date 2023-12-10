@@ -63,13 +63,13 @@ public class TaskController {
         }
 
         // search and filter get controllers for tasks
-    @GetMapping("/api/tasks/search")
-    public ResponseEntity<List<TaskDTO>> findByNameOrDescription(
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "name", required = false) String description) {
-        List<TaskDTO> matchedTasks = taskService.findByNameOrDescription(name, null);
-        return ResponseEntity.ok(matchedTasks);
-    }
+        @GetMapping("/api/tasks/search")
+        public ResponseEntity<List<TaskDTO>> findByNameOrDescription(
+                @RequestParam(value = "name", required = false) String name,
+                @RequestParam(value = "name", required = false) String description) {
+            List<TaskDTO> matchedTasks = taskService.findByNameOrDescription(name, description);
+            return ResponseEntity.ok(matchedTasks);
+        }
 
     @GetMapping("/api/tasks/filter")
     public ResponseEntity<List<TaskDTO>> filterByStatus(@RequestParam TaskStatus taskStatus){
