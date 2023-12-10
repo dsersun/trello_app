@@ -11,8 +11,6 @@ import java.util.List;
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
 
-
-
     List<Project> findAllByProjectNameContainingIgnoreCaseOrProjectDescriptionContainingIgnoreCase(String name, String description);
 
     List<Project> findAllByStartDateBetween(Date startDate, Date endDate);

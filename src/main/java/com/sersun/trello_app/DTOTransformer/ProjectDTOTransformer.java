@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjectDTOTransformer {
 
-    public ProjectDTO convertToDto(Project project){
+    public ProjectDTO convertToDto(Project project) {
         return ProjectDTO.builder()
                 .projectId(project.getProjectId())
                 .projectName(project.getProjectName())
@@ -17,7 +17,7 @@ public class ProjectDTOTransformer {
                 .build();
     }
 
-    public Project convertToModel(ProjectDTO projectDTO){
+    public Project convertToModel(ProjectDTO projectDTO) {
         return Project.builder()
                 .projectId(projectDTO.getProjectId())
                 .projectName(projectDTO.getProjectName())

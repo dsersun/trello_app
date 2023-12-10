@@ -32,12 +32,9 @@ public class TaskService {
     TaskDTOTransformer taskDTOTransformer;
 
 
-
-
-
     // Получение списка задач для конкретного проекта
-    public List<TaskDTO> returnAllTaskByProjectId(Integer projectId){
-        List<Task> taskListByProject =  taskRepository.findAll();
+    public List<TaskDTO> returnAllTaskByProjectId(Integer projectId) {
+        List<Task> taskListByProject = taskRepository.findAll();
         log.info("Returning all task by projectId from the database...");
         return taskListByProject.stream()
                 .map(e -> taskDTOTransformer.convertToDto(e))
@@ -46,9 +43,9 @@ public class TaskService {
     }
 
     // Создание новой задачи в рамках проекта
-    public void createTask(Integer projectId, TaskDTO taskDTO){
+    public void createTask(Integer projectId, TaskDTO taskDTO) {
         Project project = projectRepository.findById(projectId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         taskDTO.setProjectId(project.getProjectId());
         Task task = taskDTOTransformer.convertToModel(taskDTO, project);
         taskRepository.save(task);
@@ -56,7 +53,7 @@ public class TaskService {
     }
 
     // Получение информации о конкретной задаче в рамках проекта
-    public TaskDTO returnTaskByIdAndByProjectId(Integer taskId, Integer projectId){
+    public TaskDTO returnTaskByIdAndByProjectId(Integer taskId, Integer projectId) {
         log.info("Returning all task by projectId from the database...");
         return taskRepository.findByProjectProjectId(projectId).stream()
                 .map(e -> taskDTOTransformer.convertToDto(e))
@@ -65,7 +62,7 @@ public class TaskService {
     }
 
     // Обновление информации о конкретной задаче в рамках проекта
-    public Task updateTask(TaskDTO updatedTask, Integer taskId, Integer projectId){
+    public Task updateTask(TaskDTO updatedTask, Integer taskId, Integer projectId) {
         Task existingTask = taskRepository.findByProjectProjectId(projectId).stream()
                 .filter(e -> e.getTaskId().equals(taskId))
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -80,7 +77,7 @@ public class TaskService {
     }
 
     // Удаление конкретной задачи в рамках проекта
-    public void deleteTask(Integer taskId, Integer projectId){
+    public void deleteTask(Integer taskId, Integer projectId) {
         Task task = taskRepository.findByProjectProjectId(projectId).stream()
                 .filter(e -> e.getTaskId().equals(taskId))
                 .findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -99,7 +96,7 @@ public class TaskService {
     }
 
     // assign task to user
-    public void assignTaskToUser(Integer taskId, Integer userId){
+    public void assignTaskToUser(Integer taskId, Integer userId) {
         Task existingTask = taskRepository.findByTaskId(taskId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         User user = usersRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         existingTask.setUser(user);
@@ -115,7 +112,7 @@ public class TaskService {
         return taskRepository.save(completedTask);
     }
 
-    public List<TaskDTO> findByNameOrDescription(String name, String description){
+    public List<TaskDTO> findByNameOrDescription(String name, String description) {
         return taskRepository
                 .findAllByTaskNameContainingIgnoreCaseOrTaskDescriptionContainingIgnoreCase(name, description)
                 .stream()
@@ -123,7 +120,7 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    public List<TaskDTO> findAllByTaskStatus(TaskStatus taskStatus){
+    public List<TaskDTO> findAllByTaskStatus(TaskStatus taskStatus) {
         return taskRepository
                 .findAllByStatus(taskStatus)
                 .stream()
@@ -131,7 +128,7 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    public List<TaskDTO> filterByDueDate(Date startDate, Date endDate){
+    public List<TaskDTO> filterByDueDate(Date startDate, Date endDate) {
         return taskRepository
                 .findAllByDueDateBetween(startDate, endDate)
                 .stream()
