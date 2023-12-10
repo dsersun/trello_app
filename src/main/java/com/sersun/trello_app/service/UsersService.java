@@ -2,16 +2,11 @@ package com.sersun.trello_app.service;
 
 import com.sersun.trello_app.model.User;
 import com.sersun.trello_app.repository.UsersRepository;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -20,17 +15,17 @@ public class UsersService {
     @Autowired
     UsersRepository usersRepository;
 
-    public void createUser(User user){
+    public void createUser(User user) {
         usersRepository.save(user);
         log.info("Created new user: " + user);
     }
 
-    public User returnUserById(Integer id){
+    public User returnUserById(Integer id) {
         return usersRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
     }
 
-    public void updateUser(Integer id, User user){
+    public void updateUser(Integer id, User user) {
         User foundUser = usersRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         user.setUserId(id);
@@ -48,7 +43,7 @@ public class UsersService {
     }
 
 
-    public void deleteUser(Integer id){
+    public void deleteUser(Integer id) {
         User user = usersRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         usersRepository.delete(user);

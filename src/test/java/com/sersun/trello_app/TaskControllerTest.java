@@ -27,16 +27,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 public class TaskControllerTest {
 
-    @InjectMocks
-    private TaskController taskController;
-
-    @Mock
-    private TaskService taskService;
-
     MockMvc mockMvc;
     ObjectMapper objectMapper;
     TaskDTO taskDTO;
     ProjectDTO projectDTO;
+    @InjectMocks
+    private TaskController taskController;
+    @Mock
+    private TaskService taskService;
 
     @Before
     public void setUp() {
@@ -67,9 +65,9 @@ public class TaskControllerTest {
         String taskJson = objectMapper.writeValueAsString(taskDTO);
         Integer id = 123;
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/tasks" + id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(taskJson))
+                        MockMvcRequestBuilders.post("/api/tasks" + id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(taskJson))
                 .andExpect(status().isOk()
                 );
 
@@ -85,9 +83,9 @@ public class TaskControllerTest {
         Integer project_id = 123;
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/projects/"+ project_id+"/tasks")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(taskJson))
+                        MockMvcRequestBuilders.get("/api/projects/" + project_id + "/tasks")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(taskJson))
                 .andExpect(status().isOk()
                 );
         verify(taskService, Mockito.times(1)).returnAllTaskByProjectId(project_id);
@@ -101,9 +99,9 @@ public class TaskControllerTest {
         Integer project_id = 123;
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/projects/"+ project_id+"/tasks/"+ task_id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(taskJson))
+                        MockMvcRequestBuilders.get("/api/projects/" + project_id + "/tasks/" + task_id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(taskJson))
                 .andExpect(status().isOk()
                 );
 
@@ -118,9 +116,9 @@ public class TaskControllerTest {
         Integer project_id = 123;
 
         mockMvc.perform(
-                MockMvcRequestBuilders.delete("/api/projects/"+ project_id+"/tasks/"+ task_id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(taskJson))
+                        MockMvcRequestBuilders.delete("/api/projects/" + project_id + "/tasks/" + task_id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(taskJson))
                 .andExpect(status().isOk()
                 );
 
@@ -135,9 +133,9 @@ public class TaskControllerTest {
         Integer project_id = 123;
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/api/projects/"+ project_id+"/tasks/"+ task_id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(taskJson))
+                        MockMvcRequestBuilders.put("/api/projects/" + project_id + "/tasks/" + task_id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(taskJson))
                 .andExpect(status().isOk()
                 );
 
@@ -151,9 +149,9 @@ public class TaskControllerTest {
         Integer user_id = 123;
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/tasks/assignes/"+ user_id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(taskJson))
+                        MockMvcRequestBuilders.get("/api/tasks/assigned/" + user_id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(taskJson))
                 .andExpect(status().isOk()
                 );
 
@@ -168,9 +166,9 @@ public class TaskControllerTest {
         Integer user_id = 123;
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/api/tasks/"+ task_id+"/assignes/"+ user_id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(taskJson))
+                        MockMvcRequestBuilders.put("/api/tasks/" + task_id + "/assign/" + user_id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(taskJson))
                 .andExpect(status().isOk()
                 );
 
@@ -184,9 +182,9 @@ public class TaskControllerTest {
         Integer task_id = 123;
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/api/tasks/"+ task_id+"/complete")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(taskJson))
+                        MockMvcRequestBuilders.put("/api/tasks/" + task_id + "/complete")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(taskJson))
                 .andExpect(status().isOk()
                 );
 

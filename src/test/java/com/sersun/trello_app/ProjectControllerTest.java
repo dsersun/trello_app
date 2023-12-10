@@ -23,15 +23,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectControllerTest {
-    @InjectMocks
-    private ProjectController projectController;
-    @Mock
-    private ProjectsService projectsService;
     MockMvc mockMvc;
     ObjectMapper objectMapper;
     //ProjectDTO projectDTO;
@@ -39,6 +36,11 @@ public class ProjectControllerTest {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     Date startDate;
     Date endDate;
+    @InjectMocks
+    private ProjectController projectController;
+    @Mock
+    private ProjectsService projectsService;
+
     {
         try {
             startDate = dateFormat.parse("2022-01-01");
@@ -47,7 +49,6 @@ public class ProjectControllerTest {
             throw new RuntimeException(e);
         }
     }
-
 
 
     @Before
@@ -69,9 +70,9 @@ public class ProjectControllerTest {
         String taskJson = objectMapper.writeValueAsString(project);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/projects")
-                .contentType("application/json")
-                .content(taskJson))
+                        MockMvcRequestBuilders.get("/api/projects")
+                                .contentType("application/json")
+                                .content(taskJson))
                 .andExpect(status().isOk()
                 );
 
@@ -83,9 +84,9 @@ public class ProjectControllerTest {
         String ProjectJson = objectMapper.writeValueAsString(project);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/projects")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(ProjectJson))
+                        MockMvcRequestBuilders.post("/api/projects")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(ProjectJson))
                 .andExpect(status().isOk()
                 );
 
@@ -118,9 +119,9 @@ public class ProjectControllerTest {
     public void testDeleteProjectEndpoint() throws Exception {
         final Integer id = 123;
         mockMvc.perform(
-                MockMvcRequestBuilders.delete("/api/projects/" + id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        MockMvcRequestBuilders.delete("/api/projects/" + id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(""))
                 .andExpect(status().isOk()
                 );
         verify(projectsService, Mockito.times(1)).deleteProject(id);
@@ -130,9 +131,9 @@ public class ProjectControllerTest {
     public void returnProjectsByProjectId() throws Exception {
         final Integer id = 123;
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/projects/" + id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        MockMvcRequestBuilders.get("/api/projects/" + id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(""))
                 .andExpect(status().isOk()
                 );
         verify(projectsService, Mockito.times(1)).returnProjectById(id);

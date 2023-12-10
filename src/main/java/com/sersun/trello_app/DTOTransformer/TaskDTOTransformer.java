@@ -18,11 +18,11 @@ public class TaskDTOTransformer {
                 .status(task.getStatus())
                 .executorId(
                         //return 0 (zero) for executorId in case task don't have assigned executor
-                        (task.getUser()) !=null ? task.getUser().getUserId() : 0)
+                        (task.getUser()) != null ? task.getUser().getUserId() : 0)
                 .build();
     }
 
-    public Task convertToModel(TaskDTO taskDTO, Project project){
+    public Task convertToModel(TaskDTO taskDTO, Project project) {
         return Task.builder()
                 .project(project)
                 .taskName(taskDTO.getTaskName())

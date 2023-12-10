@@ -25,15 +25,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserControllerTest {
-    @InjectMocks
-    private UserController userController;
-
-    @Mock
-    private UsersService usersService;
-
     MockMvc mockMvc;
     ObjectMapper objectMapper;
     User user;
+    @InjectMocks
+    private UserController userController;
+    @Mock
+    private UsersService usersService;
 
     @Before
     public void setUp() {
@@ -53,9 +51,9 @@ public class UserControllerTest {
         String userJson = objectMapper.writeValueAsString(user);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/register")
-                .contentType("application/json")
-                .content(userJson))
+                        MockMvcRequestBuilders.post("/api/register")
+                                .contentType("application/json")
+                                .content(userJson))
                 .andExpect(status().isOk()
                 );
         verify(usersService, Mockito.times(1)).createUser(user);
@@ -66,8 +64,8 @@ public class UserControllerTest {
         final Integer id = 1684646;
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/user/profile/" + id)
-                .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.get("/api/user/profile/" + id)
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()
                 );
         verify(usersService, Mockito.times(1)).returnUserById(1684646);
@@ -79,9 +77,9 @@ public class UserControllerTest {
         String userJson = objectMapper.writeValueAsString(user);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/api/user/profile/" + id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userJson))
+                        MockMvcRequestBuilders.put("/api/user/profile/" + id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(userJson))
                 .andExpect(status().isOk()
                 );
         verify(usersService, Mockito.times(1)).updateUser(id, user);
@@ -97,15 +95,15 @@ public class UserControllerTest {
         when(usersService.updateUserPassword(eq(id), any(String.class))).thenReturn(mockUser);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/api/user/" + id + "/password")
-                .content(newPassword)
-                        .contentType("plain/text"))
+                        MockMvcRequestBuilders.put("/api/user/" + id + "/password")
+                                .content(newPassword)
+                                .contentType("plain/text"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("User with id: " + id + " has been updated"));
 
         verify(usersService).updateUserPassword(eq(id), any(String.class));
-        verify(usersService, Mockito.times(1)).updateUserPassword(eq(id),  eq(newPassword));
-       // Mockito.verify(usersService, Mockito.times(1)).updateUserPassword(id,  newPassword);
+        verify(usersService, Mockito.times(1)).updateUserPassword(eq(id), eq(newPassword));
+        // Mockito.verify(usersService, Mockito.times(1)).updateUserPassword(id,  newPassword);
     }
 
     @Test
@@ -113,8 +111,8 @@ public class UserControllerTest {
         final Integer id = 1684646;
 
         mockMvc.perform(
-                MockMvcRequestBuilders.delete("/api/user/profile/" + id)
-                .contentType(MediaType.APPLICATION_JSON))
+                        MockMvcRequestBuilders.delete("/api/user/profile/" + id)
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()
                 );
         verify(usersService, Mockito.times(1)).deleteUser(id);

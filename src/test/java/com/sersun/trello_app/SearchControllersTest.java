@@ -34,7 +34,7 @@ public class SearchControllersTest {
     @Test
     public void testFindByNameOrDescription() {
         // Подготовка тестовых данных
-        List<TaskDTO> expectedTasks = Arrays.asList(new TaskDTO());
+        List<TaskDTO> expectedTasks = List.of(new TaskDTO());
         String name = "taskName";
         String description = "taskDescription";
 

@@ -23,7 +23,7 @@ public class ProjectsService {
     ProjectDTOTransformer projectDTOTransformer;
 
 
-    public List<ProjectDTO> returnAllProjects(){
+    public List<ProjectDTO> returnAllProjects() {
         log.info("Returning all projects from the database...");
         List<Project> allProjectList = projectRepository.findAll();
         return allProjectList.stream()
@@ -38,7 +38,7 @@ public class ProjectsService {
     }
 
     // Получение информации о конкретном проекте
-    public Project returnProjectById(Integer id){
+    public Project returnProjectById(Integer id) {
         return projectRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
     }
@@ -67,11 +67,11 @@ public class ProjectsService {
 
     // find and filters
 
-    public List<Project> searchByNameOrDescription(String name, String description){
+    public List<Project> searchByNameOrDescription(String name, String description) {
         return projectRepository.findAllByProjectNameContainingIgnoreCaseOrProjectDescriptionContainingIgnoreCase(name, description);
     }
 
-    public List<Project> filterByStartDateBetween(Date startDate, Date endDate){
+    public List<Project> filterByStartDateBetween(Date startDate, Date endDate) {
         return projectRepository.findAllByStartDateBetween(startDate, endDate);
     }
 }
